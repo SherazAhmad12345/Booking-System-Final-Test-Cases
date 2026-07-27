@@ -71,4 +71,13 @@ public final class ChiefEventCoordinator {
 		String emailEnd = "@yorku.ca";
 		return email.endsWith(emailEnd) && email.length() > emailEnd.length();
 	}
+	
+	//Just for testing
+	public void emptyListsForTesting()
+	{
+		   adminList.clear();
+		   usernames.clear();
+		   passwords.clear();
+		   emails.clear();
+	}
 }
