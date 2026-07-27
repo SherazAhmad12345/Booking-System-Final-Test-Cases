@@ -173,4 +173,11 @@ public class RoomManager implements RoomObserver {
 	}
 
 
+	//For testing purposes only.
+	public void resetRooms()
+	{
+		instance = new RoomManager();
+	}
+
+
 }
