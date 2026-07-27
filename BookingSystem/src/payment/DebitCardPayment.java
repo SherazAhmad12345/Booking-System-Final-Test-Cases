@@ -34,7 +34,7 @@ public class DebitCardPayment extends Payment{
 	}
 
 	@Override
-	protected double getFee() {
+	public double getFee() {
 		return FEE;
 	}
 

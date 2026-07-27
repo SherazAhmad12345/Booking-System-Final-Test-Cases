@@ -28,5 +28,21 @@ public class Context{
 		this.payment.deposit = deposit;
 		
 	}
-
+	
+	//The below methods are only for testing purposes.
+	
+	public String getCardInformation()
+	{
+		return this.payment.cardInformation;
+	}
+	
+	public double getDeposit()
+	{
+		return this.payment.deposit;
+	}
+	
+	public Payment getPayment()
+	{
+		return this.payment;
+	}
 }
