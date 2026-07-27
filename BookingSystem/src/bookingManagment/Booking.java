@@ -163,4 +163,11 @@ public class Booking {
 	  return base;
   }
 
+  //For testing purposes only.
+  
+  public void setDate(Date date)
+  {
+	  this.date = date;
+  }
+
 }
