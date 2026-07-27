@@ -21,7 +21,7 @@ public abstract class Payment{
 
 	public abstract double calculateCost();
 	public abstract String getStatus();
-	protected abstract double getFee();
+	public abstract double getFee();
 
 	//deposit due when booking is just the 1 hour rate plus the fee, not the full cost
 	public double calculateDeposit() {
