@@ -45,23 +45,28 @@ public class ScannerManualTests {
 
 	@Test
 	public void scanBadgeTest() {
-		ZonedDateTime startTime1 = ZonedDateTime.now().minusMinutes(1);
-		ZonedDateTime startTime2 = ZonedDateTime.now().plusMinutes(20);
-		ZonedDateTime endTime = ZonedDateTime.now().plusMinutes(30);
+		ZonedDateTime now = ZonedDateTime.now();
+		ZonedDateTime startOfDay = now.toLocalDate().atStartOfDay(now.getZone());
+		ZonedDateTime endOfDay = startOfDay.plusDays(1).minusMinutes(1); // 23:59 today
+
+		ZonedDateTime startTime1 = now.minusMinutes(1).isBefore(startOfDay) ? startOfDay : now.minusMinutes(1);
+		ZonedDateTime endTime = now.plusMinutes(30).isAfter(endOfDay) ? endOfDay : now.plusMinutes(30);
+		ZonedDateTime startTime2 = now.plusMinutes(20).isAfter(endOfDay) ? endOfDay : now.plusMinutes(20);
 
 		String end = endTime.format(DateTimeFormatter.ofPattern("HH:mm"));
 		String start1 = startTime1.format(DateTimeFormatter.ofPattern("HH:mm"));
 		String start2 = startTime2.format(DateTimeFormatter.ofPattern("HH:mm"));
 
-		BookingManager.getInstance().createBooking("UserID", "DB", "BookingID", new Date(), start1,
+		Date today = new Date();
+		BookingManager.getInstance().createBooking("UserID", "DB", "BookingID", today, start1,
 				end, 0, 0, 0);
-		BookingManager.getInstance().createBooking("UserID1", "DB1", "BookingID1", new Date(), start2, end, 0, 0,
+		BookingManager.getInstance().createBooking("UserID1", "DB1", "BookingID1", today, start2, end, 0, 0,
 				0);
 		assertEquals("scanBadge() returns false when expected true.", "accessGranted", scanner.scanBadge("UserID"));
 		assertEquals("scanBadge() returns true when expected false.", "accessDenied", scanner1.scanBadge("UserID1"));
 		assertEquals("scanBadge() returns true when expected false.", "accessDenied", scanner.scanBadge("UserID2"));
 	}
-
+	
 	@Test
 	public void requestEntryTest() {
 		rm.selectRoomID("DB").setState(new ClosedState());

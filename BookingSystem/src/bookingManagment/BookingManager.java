@@ -52,6 +52,11 @@ public final class BookingManager {
 	public void cancelBooking(String bookingID)
 	{
 		bookings.remove(bookingID);
+		
+	    if(numOfBookings > 0)
+	    {
+		 numOfBookings--;
+	    }
 	}
 	
 	public void extendBooking(String bookingID, String endTime)
