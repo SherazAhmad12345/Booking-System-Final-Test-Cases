@@ -19,7 +19,7 @@ import bookingManagment.Booking;
 import bookingManagment.BookingManager;
 import userManagement.UserFactory;
 
-public class BookingManagertManualTest {
+public class BookingManagerManualTest {
 	// TODO: Please refer to D3 Document to see what test cases need to be added
 	BookingManager bm = BookingManager.getInstance();
 
