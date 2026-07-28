@@ -8,7 +8,7 @@ import roomManagement.RoomManager;
 
 import static org.junit.Assert.*;
 
-public class AdministratorTestsManual {
+public class AdministratorManualTest {
 	
 	@After
 	public void cleanUp()

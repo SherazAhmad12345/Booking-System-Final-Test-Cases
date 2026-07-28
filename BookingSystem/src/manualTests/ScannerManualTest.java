@@ -20,7 +20,7 @@ import roomStatus.DisabledState;
 import roomStatus.EnabledState;
 import roomAccess.Scanner;
 
-public class ScannerManualTests {
+public class ScannerManualTest {
 
 	Scanner scanner;
 	Scanner scanner1;

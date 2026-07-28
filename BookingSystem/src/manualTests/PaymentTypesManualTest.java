@@ -12,7 +12,7 @@ import payment.CreditCardPayment;
 import payment.DebitCardPayment;
 import payment.InstitutionsBilling;
 
-public class PaymentTypesTestsManual {
+public class PaymentTypesManualTest {
   
 	Payment credit;
 	Payment debit;

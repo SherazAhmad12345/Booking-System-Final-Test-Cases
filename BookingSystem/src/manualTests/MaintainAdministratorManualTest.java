@@ -16,7 +16,7 @@ import org.junit.Test;
 import administratorManagement.Administrator;
 import dataManagement.MaintainAdministrator;
 
-public class MaintainAdministratorManualTests {
+public class MaintainAdministratorManualTest {
 	
 	private MaintainAdministrator maintainAdministrator;
 	private String testPath = "data/testAdministrators.csv";

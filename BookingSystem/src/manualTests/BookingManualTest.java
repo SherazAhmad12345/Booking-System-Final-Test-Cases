@@ -18,7 +18,7 @@ import bookingManagment.Booking;
 import roomManagement.Room;
 import roomManagement.RoomManager;
 
-public class BookingTestsManual {
+public class BookingManualTest {
 
 	Booking booking;
 	Booking booking2;

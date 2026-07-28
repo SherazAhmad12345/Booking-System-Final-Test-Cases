@@ -9,7 +9,7 @@ import payment.DebitCardPayment;
 import payment.InstitutionsBilling;
 import payment.Payment;
 
-public class PaymentTestsManual {
+public class PaymentManualTest {
 
 	@Test
 	public void calculateDepositTest()
