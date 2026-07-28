@@ -13,7 +13,7 @@ import userManagement.Staff;
 import userManagement.Student;
 import userManagement.User;
 
-public class UserTypeTests {
+public class UserTypeManualTest {
 
 	User faculty;
 	User student;

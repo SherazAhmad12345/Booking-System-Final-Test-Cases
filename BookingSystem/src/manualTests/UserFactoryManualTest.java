@@ -11,7 +11,7 @@ import org.junit.Test;
 import userManagement.User;
 import userManagement.UserFactory;
 
-public class UserFactoryTest {
+public class UserFactoryManualTest {
 
 	User student;
 	User faculty;
