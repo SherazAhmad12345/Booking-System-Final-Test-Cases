@@ -9,120 +9,161 @@ import roomManagement.RoomManager;
 import static org.junit.Assert.*;
 
 public class AdministratorTestsManual {
+	
+	@After
+	public void cleanUp()
+	{
+		//Remove rooms that were added in testcases
+		RoomManager.getRoomManagerInstance().resetRooms();
+	}
 
-	Administrator admin1;
-	Administrator admin2;
-	static RoomManager rm = RoomManager.getRoomManagerInstance();
-
-	@Before
-	public void setUp() {
-		admin1 = new Administrator("admin1", "password", "email@yorku.ca", 0, false);
-		admin2 = new Administrator("admin2", "password", "email@yorku.ca", 0, false);
-	  
+	@Test
+	public void testAdministratorBigConstructorAndGetters()
+	{
+		Administrator admin = new Administrator("Sam", "Abc123$#", "sam@yorku.ca", 1, false);
+		assertNotNull(admin);
+		assertFalse(admin.isChiefEventCoordinator());
+		assertEquals("Sam", admin.getUsername());
+		assertEquals("Abc123$#", admin.getPassword());
+		assertEquals("sam@yorku.ca", admin.getEmail());
+		assertEquals("Administrator", admin.getAdminType());
+		assertEquals(1, admin.getAdminID());
 	}
 	
-	@AfterClass
-	public static void resetRoomManager()
+	@Test
+	public void testAdministratorSmallConstructorAndGetters()
 	{
-		rm.resetRooms();
-	}
-
-	@Test
-	public void gettersTest() {
-		boolean isExpected = false;
-
-		if (admin1.getUsername() == "admin1" && admin1.getPassword() == "password"
-				&& admin1.getEmail() == "email@yorku.ca" && admin1.getAdminID() == 0
-				&& admin1.isChiefEventCoordinator() == false) {
-			isExpected = true;
-		}
-
-		assertTrue("Getters do not return the expected result", isExpected);
-	}
-
-	@Test
-	public void sharedRoomManagerInstanceTest() {
-
-		if (admin1.roomLocationAlreadyExists("DB") == false && admin2.roomLocationAlreadyExists("DB") == false) {
-			rm.addRoom("DB", 1, "Building");
-			assertTrue("Room Manager instance is not shared between Administrator instances.",
-					admin1.roomLocationAlreadyExists("Building") && admin2.roomLocationAlreadyExists("Building"));
-		}
-
-		else {
-			fail("Room Manager instance is not shared between Administrator instances.");
-		}
-	}
-
-	@Test
-	public void passwordAttemptTest() {
-		String attempt1 = "wrongpassword";
-		String attempt2 = null;
-		String attempt3 = "password";
-
-		assertFalse("Password verification incorrect.", admin1.checkPassword(attempt1));
-		assertFalse("Password verification incorrect, does not consider null string value.",
-				admin1.checkPassword(attempt2));
-		assertTrue("Password verifcation inccorect.", admin1.checkPassword(attempt3));
-	}
-
-	@Test
-	public void addRoomAndSelectRoomIDTest() {
-
-		rm.addRoom("DB2", 2, "Building2");
-		Room room = admin1.selectRoomID("DB2");
-
-		assertEquals("room ID of the selected room does not match the expected room ID.", room.getRoomID(), "DB2");
-		assertEquals("room capacity of the selected room does not match the expected capacity.", room.getRoomCapacity(),
-				2);
-		assertEquals("room location of the selected room does not match the expected location.", room.getRoomLocation(),
-				"Building2");
-	}
-
-	@Test
-	public void roomLocationAlreadyExistsTest() {
-		rm.addRoom("DB3", 3, "Building3");
-		assertTrue("Fails to register that room already exists", admin1.roomLocationAlreadyExists("Building3"));
-		assertFalse("Room does not exist yet returned true", admin1.roomLocationAlreadyExists("Building4"));
+		Administrator admin = new Administrator("Sam", "Abc123$#", "sam@yorku.ca", 1);
+		assertNotNull(admin);
+		assertFalse(admin.isChiefEventCoordinator());
+		assertEquals("Sam", admin.getUsername());
+		assertEquals("Abc123$#", admin.getPassword());
+		assertEquals("sam@yorku.ca", admin.getEmail());
+		assertEquals("Administrator", admin.getAdminType());
+		assertEquals(1, admin.getAdminID());
 	}
 	
-	@Test 
-	public void closeRoomTest()
+	@Test
+	public void testAdministratorHasAllRooms()
 	{
-		admin1.closeRoom("DB3");
-		Room room = admin1.selectRoomID("DB3");
-		assertEquals("Incorrect status.", room.getStatus(), "CLOSED");
+		Administrator admin = new Administrator("Sam", "Abc123$#", "sam@yorku.ca", 1);
+		assertNotNull(admin);
 		
+		assertEquals(5, admin.getAllRooms().size());
+	}
+	
+	
+	@Test
+	public void testPasswordCheck()
+	{
+		Administrator admin = new Administrator("Sam", "Abc123$#", "sam@yorku.ca", 1);
+		
+		assertFalse(admin.checkPassword(null));
+		assertFalse(admin.checkPassword("Wrong Password"));
+		
+		assertTrue(admin.checkPassword("Abc123$#"));
+	}
+	
+	@Test
+	public void testAdministratorAddRoomWithValidParameters()
+	{
+		Administrator admin = new Administrator("Sam", "Abc123$#", "sam@yorku.ca", 1);
+		assertTrue(admin.addRoom("RR-102", 55, "Random Room 102"));
+	}
+	
+	@Test
+	public void testAdministratorAddRoomWithInvalidParameters()
+	{
+		Administrator admin = new Administrator("Sam", "Abc123$#", "sam@yorku.ca", 1);
+		
+		//capacity <= 0
+		assertFalse(admin.addRoom("RR-102", -1, "Random Room 102"));
+		assertFalse(admin.addRoom("RR-102", 0, "Random Room 102"));
+		
+		//room id already exists; one of the default rooms already has ID LSB-137
+		assertFalse(admin.addRoom("LSB-137", 30, "Life Sciences Building 137A"));
+		
+		//room location already exists; one of the default rooms already has location Life Sciences Building 137
+		assertTrue(admin.roomLocationAlreadyExists("Life Sciences Building 137"));
+		assertFalse(admin.addRoom("LSB-137A", 30, "Life Sciences Building 137"));
+	}
+	
+	@Test
+	public void testSelectIDAfterAddRoom()
+	{
+		Administrator admin = new Administrator("Sam", "Abc123$#", "sam@yorku.ca", 1);
+		assertTrue(admin.addRoom("RR-102", 55, "Random Room 102"));
+		
+		assertNotNull(admin.selectRoomID("RR-102"));
+	}
+	
+	@Test
+	public void testIfAdministratorsHoldSameRoomManagerInstance(){
+		Administrator admin = new Administrator("Sam", "Abc123$#", "sam@yorku.ca", 1);
+		Administrator admin2 = new Administrator("Bob", "Aaa123$#", "bob@yorku.ca", 2);
+		
+		assertTrue(admin.addRoom("RR-105", 55, "Random Room 105"));
+		
+		assertNotNull(admin2.selectRoomID("RR-105"));
 	}
 	
 	@Test 
-	public void maintenanceAndRepairsFinishedTest()
+	public void testGetAssignedRoomID()
 	{
-		admin1.maintenanceAndRepairsFinished("DB3");
-		Room room = admin1.selectRoomID("DB3");
-		assertEquals("Incorrect status.", room.getStatus(), "ENABLED");
+		Administrator admin = new Administrator("Sam", "Abc123$#", "sam@yorku.ca", 1);
+		
+		//If user isn't assigned a room return nothing
+		assertEquals("", admin.getAssignedRoomID("Non-existing User"));
+		
+		//Return roomID based on user
+		assertTrue(admin.addRoom("RR-107", 55, "Random Room 107"));
+		
+		Room room = admin.selectRoomID("RR-107");
+		assertNotNull(room);
+		
+		room.setUser("John");
+		
+		assertEquals("RR-107", admin.getAssignedRoomID("John"));
 	}
-	
-	@Test 
-	public void disableRoomTest()
-	{
-		 admin1.disableRoom("DB2");
-		 Room room = admin1.selectRoomID("DB2");
-		 assertEquals("Incorrect status.", room.getStatus(), "DISABLED");
-	}
-	
-	//TODO: strange issue with this one, not passing test case. 
-	@Test 
-	public void enableRoomTest()
-	{
-		admin1.enableRoom("DB2");
-		Room room = admin1.selectRoomID("DB2");
-		assertEquals("Incorrect status.", room.getStatus(), "ENABLED");
-	}
-	
+
 	@Test 
 	public void toStringTest()
 	{
-		assertEquals(admin1.toString(),"Administrator + [username=" + "admin1" + ", email=" + "email@yorku.ca" + ", id=" + "0" + "]");
+		Administrator admin = new Administrator("Sam", "Abc123$#", "sam@yorku.ca", 1);
+		assertEquals(admin.toString(),"Administrator + [username=" + "Sam" + ", email=" + "sam@yorku.ca" + ", id=" + "1" + "]");
 	}
+	
+	@Test
+	public void testChangingStateIfRoomDoesntExist()
+	{
+		Administrator admin = new Administrator("Sam", "Abc123$#", "sam@yorku.ca", 1);
+		assertFalse(admin.closeRoom("ID doesn't exist"));
+		assertFalse(admin.disableRoom("ID doesn't exist"));
+		assertFalse(admin.enableRoom("ID doesn't exist"));
+		assertFalse(admin.maintenanceAndRepairsFinished("ID doesn't exist"));
+	}
+	
+	@Test
+	public void testChangingStateOfRooms()
+	{
+		Administrator admin = new Administrator("Sam", "Abc123$#", "sam@yorku.ca", 1);
+		
+		//Room is enabled at the start so it can't be re-enabled
+		assertFalse(admin.enableRoom("LSB-137"));
+		
+		//Disable an enabled room check and try disabling again
+		assertTrue(admin.disableRoom("LSB-137"));
+		assertFalse(admin.disableRoom("LSB-137"));
+		
+		//Same but for closing a disabled room
+		assertTrue(admin.closeRoom("LSB-137"));
+		assertFalse(admin.closeRoom("LSB-137"));
+		
+		//Same but for finishing maintenance/repairs
+		assertTrue(admin.maintenanceAndRepairsFinished("LSB-137"));
+		assertFalse(admin.maintenanceAndRepairsFinished("LSB-137"));
+		assertFalse(admin.enableRoom("LSB-137")); //can't enable an enabled room
+		
+	}
+	
 }
