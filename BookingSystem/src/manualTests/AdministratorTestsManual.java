@@ -9,15 +9,8 @@ import roomManagement.RoomManager;
 import static org.junit.Assert.*;
 
 public class AdministratorTestsManual {
-
-	@Before
-	public void cleanBefore()
-	{
-		//Test cases don't run in order, resetting rooms to be safe
-		RoomManager.getRoomManagerInstance().resetRooms();
-	}
 	
-	@Before
+	@After
 	public void cleanUp()
 	{
 		//Remove rooms that were added in testcases
