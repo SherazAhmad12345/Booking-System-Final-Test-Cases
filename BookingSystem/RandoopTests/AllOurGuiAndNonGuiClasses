@@ -1,5 +1,5 @@
-AdministratorManagement.Administrator
-AdministratorManagement.ChiefEventCoordinator
+administratorManagement.Administrator
+administratorManagement.ChiefEventCoordinator
 bookingManagment.Booking
 bookingManagment.BookingManager
 dataManagement.MaintainAdministrator
@@ -12,7 +12,7 @@ gui.ChiefEventCoordinatorPage
 gui.CreateNewRoomPage
 gui.ExtendBookingPage
 gui.LoginPage
-gui.ManagerRoomsPage
+gui.ManageRoomsPage
 gui.Payment
 gui.PaymentPage
 gui.PaymentPlanPage
