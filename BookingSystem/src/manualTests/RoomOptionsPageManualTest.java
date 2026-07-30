@@ -3,11 +3,15 @@ package manualTests;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNull;
 
 import java.awt.event.ComponentEvent;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import org.junit.After;
 import org.junit.Before;
@@ -101,6 +105,67 @@ public class RoomOptionsPageManualTest {
 		
 		JButton cancelButton = GuiTestHelper.findButtonByText(page, "cancel");
 		cancelButton.doClick();		
+	}
+	
+	@Test
+	public void testDropdownExcludesClosedRooms() throws Exception {
+		roomManager.disableRoom("VH-1191");
+		roomManager.closeRoom("VH-1191");
+		
+		AppFrame app = AppFrame.getInstance();
+		RoomOptionsPage page = new RoomOptionsPage(app);
+		simulateShown(page);
+		
+		JComboBox<String> dropdown = getDropdown(page);
+		assertEquals(4, dropdown.getItemCount());
+		assertFalse(containsItem(dropdown, "VH-1191"));
+ 	}
+	
+	@Test
+	public void testConfirmWithNoRoomsAvailableSetsSelectedRoomIdToNull() throws Exception {
+		AppFrame app = AppFrame.getInstance();
+		RoomOptionsPage page = new RoomOptionsPage(app);
+
+		JButton confirmButton = GuiTestHelper.findButtonByText(page, "confirm");
+		confirmButton.doClick();
+		
+		assertNull(RoomOptionsPage.getSelectedRoomID());
+		assertTrue(GuiTestHelper.isCardShowing(app, BookingInformationPage.class));
+	}
+	
+	@Test
+	public void testCancelButtonClearsBookingInformationFields() throws Exception {
+		AppFrame app = AppFrame.getInstance();
+		
+		JPanel bookingInfoPanel = BookingInformationPage.getPanel();
+		JTextField dataField = GuiTestHelper.findComponentOfType(bookingInfoPanel, JTextField.class);
+		dataField.setText("some leftover text");
+		
+		RoomOptionsPage page = new RoomOptionsPage(app);
+		JButton cancelButton =  GuiTestHelper.findButtonByText(page, "cancel");
+		cancelButton.doClick();
+		
+		assertEquals("", dataField.getText());
+	}
+	
+	@Test
+	public void testComponentHiddenEventDoesNotRefreshDropdown() throws Exception {
+		AppFrame app = AppFrame.getInstance();
+		RoomOptionsPage page = new RoomOptionsPage(app);
+		
+		page.dispatchEvent(new ComponentEvent(page, ComponentEvent.COMPONENT_HIDDEN));
+		
+		assertEquals(0, getDropdown(page).getItemCount());
+	}
+	
+	@Test
+	public void testInstructionLabelExpectedText() throws Exception {
+		AppFrame app = AppFrame.getInstance();
+		RoomOptionsPage page = new RoomOptionsPage(app);
+		
+		JLabel instructionLabel = GuiTestHelper.findComponentOfType(page,  JLabel.class);
+		
+		assertEquals("Select a Room:", instructionLabel.getText());
 	}
 	
 	private void assertContainsItem(JComboBox<String> dropdown, String item) {

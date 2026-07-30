@@ -174,4 +174,56 @@ public class ScanBadgePageManualTest {
 		assertEquals("Access Denied", getResultLabel(page).getText());
 		assertFalse(bookingManager.getBooking(TEST_BOOKING_ID).isCheckedIn());
 	}
+	
+	@Test
+	public void testScanDeniedWhenBookingHasAlreadyExpired() throws Exception {
+		AppFrame app = AppFrame.getInstance();
+
+		User testUser = UserFactory.createUser("Student", "scanBadgeTestUser3", "Str0ng!Pw",
+				"scanBadgeTestUser3@my.yorku.ca", 909092, "999999997");
+		app.setCurrentUser(testUser);
+
+		String userID = String.valueOf(testUser.getId());
+		String roomID = "CLH-205";
+
+		SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
+		Date now = new Date();
+		//booking window ended 2 hours ago
+		String startTime = timeFormat.format(new Date(now.getTime() - 3 * 60 * 60_000));
+		String endTime = timeFormat.format(new Date(now.getTime() - 2 * 60 * 60_000));
+
+		bookingManager.createBooking(userID, roomID, TEST_BOOKING_ID, now, startTime, endTime, 0, 0, 0);
+
+		ScanBadgePage page = new ScanBadgePage(app);
+		simulateShown(page);
+		getDropdown(page).setSelectedItem(roomID);
+
+		JButton scanButton = GuiTestHelper.findButtonByText(page, "Scan Badge");
+		scanButton.doClick();
+
+		assertEquals("Access Denied", getResultLabel(page).getText());
+	}
+	
+	@Test
+	public void testResultLabelResetsWhenPageIsShownAgain() throws Exception {
+		AppFrame app = AppFrame.getInstance();
+		ScanBadgePage page = new ScanBadgePage(app);
+		
+		JButton scanButton = GuiTestHelper.findButtonByText(page, "Scan Badge");
+		scanButton.doClick();
+		assertEquals("No such room.", getResultLabel(page).getText());
+		
+		simulateShown(page);
+		
+		assertEquals(" ", getResultLabel(page).getText());
+	}
+	
+	@Test
+	public void testScanButtonAndBackButtonExist() throws Exception {
+		AppFrame app = AppFrame.getInstance();
+		ScanBadgePage page = new ScanBadgePage(app);
+		
+		assertTrue(GuiTestHelper.findButtonByText(page, "Scan Badge") != null);
+		assertTrue(GuiTestHelper.findButtonByText(page, "Back") != null);
+	}
 }

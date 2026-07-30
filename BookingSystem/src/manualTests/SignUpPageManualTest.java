@@ -157,4 +157,72 @@ public class SignUpPageManualTest {
 			maintainUser.save(AppFrame.USERS_CSV_PATH);
 		}
 	}
+	
+	@Test
+	public void testDuplicateEmailDoesNotCreateSecondUser() throws Exception {
+		AppFrame app = AppFrame.getInstance();
+		MaintainUser maintainUser = app.getMaintainUser();
+
+		String existingUsername = "duplicateEmailExistingUser" + System.currentTimeMillis();
+		String sharedEmail = "duplicateEmailTest" + System.currentTimeMillis() + "@my.yorku.ca";
+		User existingUser = UserFactory.createUser("Student", existingUsername, "Str0ng!Pw", sharedEmail, 700002, "666666666");
+		maintainUser.addUser(existingUser);
+		int sizeBefore = maintainUser.users.size();
+		
+		try {
+			SignUpPage page = new SignUpPage(app);
+			String newUsername = "duplicateEmailNewUser" + System.currentTimeMillis();
+			fillForm(page, newUsername, "Str0ng!Pw", sharedEmail, "Student", "777777777");
+
+			JButton submitButton = GuiTestHelper.findButtonByText(page, "Create Account");
+			GuiTestHelper.clickAndDismissDialog(submitButton);
+
+			assertEquals(sizeBefore, maintainUser.users.size());
+			assertFalse(maintainUser.usernameExists(newUsername));
+		} finally {
+			maintainUser.users.remove(existingUser);
+		}
+	}
+	
+	@Test
+	public void testUserTypeDropdownDefaultsToStudentOnConstruction() throws Exception {
+		AppFrame app = AppFrame.getInstance();
+		SignUpPage page = new SignUpPage(app);
+		
+		assertEquals("Student", getUserTypeBox(page).getSelectedItem());
+	}
+	
+	@Test
+	public void testFormFieldsAreCLearedAfterSuccessfulSignUp() throws Exception {
+		AppFrame app = AppFrame.getInstance();
+		MaintainUser maintainUser = app.getMaintainUser();
+
+		String username = "clearFieldsTestUser" + System.currentTimeMillis();
+		String email = "@my.yorku.ca";
+		
+		try {
+			SignUpPage page = new SignUpPage(app);
+			fillForm(page, username, "Str0ng!Pw1", email, "Student", "888888888");
+
+			JButton submitButton = GuiTestHelper.findButtonByText(page, "Create Account");
+			GuiTestHelper.clickAndDismissDialog(submitButton);
+
+			assertEquals("", getUsernameField(page).getText());
+			assertEquals("", getEmailField(page).getText());
+			assertEquals("", getOrgIdField(page).getText());
+			assertEquals(0, getPasswordField(page).getPassword().length);
+		} finally {
+			maintainUser.users.removeIf(u -> u.getUsername().equals(username));
+			maintainUser.save(AppFrame.USERS_CSV_PATH);
+		}
+	}
+	
+	@Test
+	public void testCreateAccountButtonExists() throws Exception {
+		AppFrame app = AppFrame.getInstance();
+		SignUpPage page = new SignUpPage(app);
+		
+		assertTrue(GuiTestHelper.findButtonByText(page, "Create Account") != null);
+	}
+	
 }
