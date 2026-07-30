@@ -7,6 +7,7 @@ import java.awt.Window;
 import java.lang.reflect.Field;
 
 import javax.swing.JButton;
+import javax.swing.SwingUtilities;
 
 import gui.AppFrame;
 
@@ -65,11 +66,14 @@ public class GuiTestHelper {
 	public static void clickAndDismissDialog(JButton button) throws InterruptedException {
 		Thread worker = new Thread(button::doClick, "gui-test-dialog-clicker");
 		worker.start();
-		
+
 		Dialog dialog = waitForDialog(3000);
 		if (dialog != null) {
-			dialog.setVisible(false);
-			dialog.dispose();
+			// Dismiss on the EDT so the modal secondary loop exits correctly on macOS
+			SwingUtilities.invokeLater(() -> {
+				dialog.setVisible(false);
+				dialog.dispose();
+			});
 		}
 		worker.join(3000);
 	}
@@ -78,7 +82,7 @@ public class GuiTestHelper {
 		long deadline = System.currentTimeMillis() + timeoutMillis;
 		while (System.currentTimeMillis() < deadline) {
 			for (Window w : Window.getWindows()) {
-				if (w instanceof Dialog && w.isShowing()) {
+				if (w instanceof Dialog && w.isVisible()) {
 					return (Dialog) w;
 				}
 			}
