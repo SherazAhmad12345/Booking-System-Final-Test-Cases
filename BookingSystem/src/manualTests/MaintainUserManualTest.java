@@ -21,7 +21,7 @@ import userManagement.Staff;
 import userManagement.Student;
 import userManagement.User;
 
-public class MaintainUserManualTests {
+public class MaintainUserManualTest {
 	private MaintainUser maintainUser;
 	private String testPath = "data/testUsers.csv";
 	private File testFile;
