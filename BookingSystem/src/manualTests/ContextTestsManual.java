@@ -39,7 +39,7 @@ public class ContextTestsManual{
 		assertEquals("Payment type does not match expected for debit payments.", 22.5, credit.executeCalculateDeposit(), 0.001);
 	}
 	
-	//2-[Done]-executeCalculateDeposit() test is added to verify that the deposit calculation is correct for each payment type.
+	//2-executeCalculateDeposit() test is added to verify that the deposit calculation is correct for each payment type.
 	@Test
 	public void executeCalculateDeposit() {		
 		assertEquals("Expected deposit does not match actual deposit for credit payments.", 21.5, credit.executeCalculateDeposit(), 0.001);		
