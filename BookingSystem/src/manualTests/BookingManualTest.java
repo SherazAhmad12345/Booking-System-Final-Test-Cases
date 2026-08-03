@@ -85,14 +85,9 @@ public class BookingManualTest {
 
 	@Test
 	public void setCheckedInTest() {
-		if (!booking.isCheckedIn()) {
-			booking.setCheckedIn(true);
-			assertTrue("checked in status did not change", booking.isCheckedIn());
-		}
-
-		else {
-			fail("checked in status is not set to false by default");
-		}
+		assertFalse("checked in status did not change", booking.isCheckedIn());
+		booking.setCheckedIn(true);
+		assertTrue("checked in status did not change", booking.isCheckedIn());
 	}
 
 	@Test
@@ -125,7 +120,6 @@ public class BookingManualTest {
 		assertEquals(expectedDate, actualDate);
 	}
 
-	//TODO: Resolve issue with final assertion
 	@Test
 	public void toStringTest() {
 		String base1 = "roomID" + " on " + new SimpleDateFormat("MM/dd/yy").format(date) + " " + booking.getStartTime() + "-" + booking.getEndTime();
@@ -135,11 +129,12 @@ public class BookingManualTest {
 		booking.setCheckedIn(true);
 		assertEquals("Does not match expected output.", booking.toString(), base1 + status1);
 		booking.setCheckedIn(false);
-		Calendar cal = Calendar.getInstance();
-		cal.add(Calendar.DATE, -1);
-		Date yesterday = cal.getTime();
-		booking2.setDate(yesterday);
-		String base2 = "roomID2" + " on " + new SimpleDateFormat("MM/dd/yy").format(yesterday) + " " + booking2.getStartTime() + "-" + booking2.getEndTime();
+		Calendar fixedCal = Calendar.getInstance();
+		fixedCal.set(2025, Calendar.JUNE, 15, 12, 0, 0);
+		fixedCal.set(Calendar.MILLISECOND, 0);
+		Date fixedDay = fixedCal.getTime();
+		booking2.setDate(fixedDay);
+		String base2 = "roomID2" + " on " + new SimpleDateFormat("MM/dd/yy").format(fixedDay) + " " + booking2.getStartTime() + "-" + booking2.getEndTime();
 		assertEquals("Does not match expected output.", booking2.toString(), base2 + status2);
 	}
 }

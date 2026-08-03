@@ -28,12 +28,13 @@ public class RoomOptionsPageManualTest {
 	
 	@Before
 	public void resetRoomsBeforeEachTest() {
-	roomManager.resetRooms();
+		RoomManager.getRoomManagerInstance().resetRooms();
+		roomManager = RoomManager.getRoomManagerInstance();
 	}
 	
 	@After
 	public void resetRoomsAfterEachTest() {
-		roomManager.resetRooms();	
+		RoomManager.getRoomManagerInstance().resetRooms();
 	}
 	
 	@SuppressWarnings("unchecked")
