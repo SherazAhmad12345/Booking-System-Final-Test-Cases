@@ -1,7 +1,2 @@
 username,password,email,id,isChiefEventCoordinator
-validAdmin58874463397791,Abc123$#,validAdmin58874463397791@yorku.ca,1,false
-validAdmin59053989583541,Abc123$#,validAdmin59053989583541@yorku.ca,2,false
-validAdmin60545671878958,Abc123$#,validAdmin60545671878958@yorku.ca,3,false
-validAdmin61100329119958,Abc123$#,validAdmin61100329119958@yorku.ca,4,false
-validAdmin61367872217833,Abc123$#,validAdmin61367872217833@yorku.ca,5,false
-validAdmin61616556922458,Abc123$#,validAdmin61616556922458@yorku.ca,6,false
+Coordinator,C00rd!23,coordinator@yorku.ca,2,true
